@@ -1,78 +1,78 @@
 // src/components/ChatView.js
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './ChatView.css';
 
-// Example “hard-coded” messages. Each has a reactions array and we’ll add
-// a replyToId to the state later.
-const initialMessages = [
-  {
-    id: 1,
-    user: {
-      name: 'Papanoel1337',
-      avatar: 'https://i.pravatar.cc/40?img=47',
-    },
-    timestamp: new Date('2025-06-04T16:23:00'),
-    content: 'tyvärr inte än',
-    reactions: [],
-  },
-  {
-    id: 2,
-    user: {
-      name: 'Papanoel1337',
-      avatar: 'https://i.pravatar.cc/40?img=47',
-    },
-    timestamp: new Date('2025-06-04T16:24:30'),
-    content: 'theresia kommer hit om 20, ska snacka med henne då o laga mat till henne',
-    reactions: [],
-  },
-  {
-    id: 3,
-    user: {
-      name: 'Papanoel1337',
-      avatar: 'https://i.pravatar.cc/40?img=47',
-    },
-    timestamp: new Date('2025-06-04T16:25:45'),
-    content: 'se om jag har tid',
-    reactions: [],
-  },
-  {
-    id: 4,
-    user: {
-      name: 'Papanoel1337',
-      avatar: 'https://i.pravatar.cc/40?img=47',
-    },
-    timestamp: new Date('2025-06-04T16:26:10'),
-    content: 'men hör av mig om max en timme',
-    reactions: [],
-  },
-  {
-    id: 5,
-    user: {
-      name: 'AnotherUser',
-      avatar: 'https://i.pravatar.cc/40?img=12',
-    },
-    timestamp: new Date('2025-06-04T16:40:00'),
-    content: 'This is a separate user sending a message.',
-    reactions: [],
-  },
-  {
-    id: 6,
-    user: {
-      name: 'AnotherUser',
-      avatar: 'https://i.pravatar.cc/40?img=12',
-    },
-    timestamp: new Date('2025-06-04T16:43:00'),
-    content: 'Second message from AnotherUser within five minutes.',
-    reactions: [],
-  },
-];
-
 export default function ChatView({ channel }) {
-  const [messages, setMessages] = useState(initialMessages);
-  const [hoveredMessageId, setHoveredMessageId] = useState(null);
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      user: {
+        name: 'Papanoel1337',
+        avatar: 'https://i.pravatar.cc/40?img=47',
+      },
+      timestamp: new Date('2025-06-04T16:23:00'),
+      content: 'tyvärr inte än',
+      reactions: [],
+    },
+    {
+      id: 2,
+      user: {
+        name: 'Papanoel1337',
+        avatar: 'https://i.pravatar.cc/40?img=47',
+      },
+      timestamp: new Date('2025-06-04T16:24:30'),
+      content:
+        'theresia kommer hit om 20, ska snacka med henne då o laga mat till henne',
+      reactions: [],
+    },
+    {
+      id: 3,
+      user: {
+        name: 'Papanoel1337',
+        avatar: 'https://i.pravatar.cc/40?img=47',
+      },
+      timestamp: new Date('2025-06-04T16:25:45'),
+      content: 'se om jag har tid',
+      reactions: [],
+    },
+    {
+      id: 4,
+      user: {
+        name: 'Papanoel1337',
+        avatar: 'https://i.pravatar.cc/40?img=47',
+      },
+      timestamp: new Date('2025-06-04T16:26:10'),
+      content: 'men hör av mig om max en timme',
+      reactions: [],
+    },
+    {
+      id: 5,
+      user: {
+        name: 'AnotherUser',
+        avatar: 'https://i.pravatar.cc/40?img=12',
+      },
+      timestamp: new Date('2025-06-04T16:40:00'),
+      content: 'This is a separate user sending a message.',
+      reactions: [],
+    },
+    {
+      id: 6,
+      user: {
+        name: 'AnotherUser',
+        avatar: 'https://i.pravatar.cc/40?img=12',
+      },
+      timestamp: new Date('2025-06-04T16:43:00'),
+      content: 'Second message from AnotherUser within five minutes.',
+      reactions: [],
+    },
+  ]);
 
-  // NEW: track which message is being replied to (id or null)
+  const [hoveredMessageId, setHoveredMessageId] = useState(null);
   const [replyToId, setReplyToId] = useState(null);
+
+  // NEW: controlled textarea value
+  const [inputValue, setInputValue] = useState('');
+  const textareaRef = useRef(null);
 
   // Format a Date object as “HH:MM”
   const formatTime = (d) => {
@@ -81,28 +81,48 @@ export default function ChatView({ channel }) {
     return `${hh}:${mm}`;
   };
 
-  // Add a reaction emoji to a message (unchanged)
+  // NEW: auto‐resize the textarea whenever inputValue changes
+  useEffect(() => {
+    const ta = textareaRef.current;
+    if (ta) {
+      if (inputValue === '') {
+        // If empty, let CSS/rows=1 make it one line only
+        ta.style.height = 'auto';
+      } else {
+        // Otherwise, grow to fit all lines
+        ta.style.height = 'auto';
+        ta.style.height = ta.scrollHeight + 'px';
+      }
+    }
+  }, [inputValue]);
+
+  // NEW: Handle Enter key (without Shift) to “send” the chat
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      alert('sent a chat');
+      setInputValue('');
+      // The useEffect above will reset the textarea’s height to auto and then shrink it
+    }
+  };
+
+  // Add a reaction emoji to a message
   const addReaction = (messageId, emoji) => {
     setMessages((prev) =>
       prev.map((m) =>
-        m.id === messageId
-          ? { ...m, reactions: [...m.reactions, emoji] }
-          : m
+        m.id === messageId ? { ...m, reactions: [...m.reactions, emoji] } : m
       )
     );
   };
 
-  // A small list of emojis to choose from (unchanged)
   const emojiOptions = ['👍', '😂', '❤️', '😮', '😢', '👏'];
 
-  // When the user clicks “Reply” on a message:
-  // store that message’s id in state
   const onReplyClick = (messageId) => {
     setReplyToId(messageId);
   };
 
-  // Find the message object for `replyToId` so we can show its snippet
-  const messageBeingRepliedTo = messages.find((m) => m.id === replyToId) || null;
+  const messageBeingRepliedTo =
+    messages.find((m) => m.id === replyToId) || null;
 
   return (
     <div className="chatView">
@@ -117,22 +137,16 @@ export default function ChatView({ channel }) {
           const prev = messages[idx - 1];
           const next = messages[idx + 1];
 
-          // 1) Do we “clump” with the previous?
           const isClumped =
             prev &&
             prev.user.name === msg.user.name &&
             msg.timestamp - prev.timestamp <= 5 * 60 * 1000;
-
-          // 2) Is the next message also in this clump?
           const nextIsClumped =
             next &&
             next.user.name === msg.user.name &&
             next.timestamp - msg.timestamp <= 5 * 60 * 1000;
 
-          // 3) Set margin-bottom: 2px if next is clumped, otherwise 16px
           const marginBottom = nextIsClumped ? '2px' : '16px';
-
-          // 4) Show emoji picker whenever this message is hovered
           const isPickerVisible = hoveredMessageId === msg.id;
 
           return (
@@ -143,7 +157,6 @@ export default function ChatView({ channel }) {
               onMouseEnter={() => setHoveredMessageId(msg.id)}
               onMouseLeave={() => setHoveredMessageId(null)}
             >
-              {/* Avatar + Meta only if NOT clumped */}
               {!isClumped && (
                 <img
                   className="messageAvatar"
@@ -168,7 +181,6 @@ export default function ChatView({ channel }) {
                 <div className="messageBody">
                   <div className="messageText">{msg.content}</div>
 
-                  {/* Render existing reactions */}
                   {msg.reactions.length > 0 && (
                     <div className="reactions">
                       {msg.reactions.map((r, i) => (
@@ -181,11 +193,9 @@ export default function ChatView({ channel }) {
                 </div>
               </div>
 
-              {/* ─── Actions (emoji picker + reply) ────────────────────────── */}
               <div className="messageActions">
                 {isPickerVisible && (
                   <div className="emojiPicker">
-                    {/* Emoji list */}
                     <div className="emojiList">
                       {emojiOptions.map((emo) => (
                         <span
@@ -197,11 +207,7 @@ export default function ChatView({ channel }) {
                         </span>
                       ))}
                     </div>
-                    
-                    {/* Divider */}
                     <div className="pickerDivider">|</div>
-                    
-                    {/* Reply button */}
                     <span
                       className="replyButton"
                       onClick={() => onReplyClick(msg.id)}
@@ -212,13 +218,12 @@ export default function ChatView({ channel }) {
                   </div>
                 )}
               </div>
-
             </div>
           );
         })}
       </div>
 
-      {/* ─── “Replying to …” Banner (only if replyToId is set) ─────── */}
+      {/* ─── “Replying to …” Banner (if replying) ─────── */}
       {messageBeingRepliedTo && (
         <div className="replyBanner">
           <div className="replyInfo">
@@ -239,15 +244,15 @@ export default function ChatView({ channel }) {
         </div>
       )}
 
-      {/* ─── Input Bar ───────────────────────────────────── */}
+      {/* ─── Input Bar (textarea that grows upward) ───────────────────── */}
       <div className="chatInput">
-        <input
-          type="text"
-          placeholder={
-            messageBeingRepliedTo
-              ? `Replying to ${messageBeingRepliedTo.user.name}…`
-              : `Message #${channel}`
-          }
+        <textarea
+          ref={textareaRef}
+          rows={1}                           // start at one line exactly
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={`Message #${channel}`}
         />
       </div>
     </div>

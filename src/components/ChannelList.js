@@ -4,7 +4,7 @@ import './ChannelList.css';
 function ChannelList({ selectedChannel, setSelectedChannel }) {
   const server = {
     name: 'My Server',
-    iconUrl: 'https://i.pravatar.cc/40?img=12' // Replace with your server‐icon URL
+    iconUrl: 'https://i.pravatar.cc/40?img=12'
   };
 
   const textChannels = ['general', 'memes', 'gaming'];

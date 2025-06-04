@@ -1,0 +1,29 @@
+/* DraggableFrame.css */
+
+.draggableFrame {
+  position: fixed;
+  width: 200px;        /* change as needed */
+  height: 120px;       /* change as needed */
+  background-color: #18191b; /* match the voice‐chat theme */
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 1000;       /* sit above everything else */
+  cursor: move;        /* indicate draggable */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* When you hover, lighten the border a bit */
+.draggableFrame:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* If the content is a video tag, make it fill the container */
+.draggableFrame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
