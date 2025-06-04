@@ -1,11 +1,25 @@
+/* ProfileBar.css */
+
+/* Wrap the bar in a darker, rounded‐corner “box” */
 .profileBar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #2f3136;
+
+  /* Darker than the sidebar (#2f3136) */
+  background-color: #232426;
+
+  /* Round all corners */
+  border-radius: 8px;
+
+  /* Add margin so it floats above the very bottom */
+  margin: 8px;
+
+  /* Keep a little interior padding */
   padding: 10px;
-  border-radius: 12px;
-  margin: 10px;
+
+  /* Optional: a subtle shadow to make it “pop” */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .profileInfo {
@@ -18,6 +32,7 @@
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
+  object-fit: cover;
 }
 
 .userText {
@@ -27,12 +42,14 @@
 
 .username {
   font-weight: bold;
-  color: white;
+  color: #ffffff;
+  font-size: 14px;
 }
 
 .status {
   font-size: 12px;
   color: #b9bbbe;
+  margin-top: 2px;
 }
 
 .profileActions {
@@ -44,7 +61,7 @@
 .iconButton {
   background: none;
   border: none;
-  color: white;
+  color: #ffffff;
   font-size: 18px;
   cursor: pointer;
   transition: opacity 0.2s ease;

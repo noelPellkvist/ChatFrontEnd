@@ -27,32 +27,27 @@
   line-height: 1.6;
   display: flex;
   flex-direction: column;
-  /* No gap here—spacing is done per‐message via inline `margin-bottom` */
 }
 
-/* ─── Each message item ───────────────────────────────────────────────── */
-
-/* Make each message container relative, so we can absolutely place the reaction icon */
+/* ─── Each message item ────────────────────────────────── */
 .messageItem {
   display: flex;
   align-items: flex-start;
-  position: relative; /* enables absolute positioning of .messageActions */
+  position: relative; /* enable absolute children */
   transition: background 0.2s ease;
 }
 
-/* Highlight background + rounded corners on hover */
 .messageItem:hover {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
 }
 
-/* Clumped‐within‐chat rules (hide avatar + meta) */
+/* If “clumped,” hide avatar + meta */
 .messageItem.clumped .messageAvatar,
 .messageItem.clumped .messageMeta {
   display: none;
 }
 
-/* Avatar is still 40×40 circular */
 .messageAvatar {
   width: 40px;
   height: 40px;
@@ -61,7 +56,6 @@
   margin-right: 12px;
 }
 
-/* Container for username/timestamp + text */
 .messageContent {
   display: flex;
   flex-direction: column;
@@ -86,7 +80,6 @@
   color: #b9bbbe;
 }
 
-/* The actual message text (body) */
 .messageBody {
   display: flex;
   flex-direction: column;
@@ -99,9 +92,7 @@
   white-space: pre-wrap;
 }
 
-/* ─── Emoji Reactions Display ─────────────────────────────────────────── */
-
-/* Inline “pills” for each reaction under the text */
+/* ─── Reactions below message text ────────────────────── */
 .reactions {
   display: flex;
   flex-wrap: wrap;
@@ -118,9 +109,7 @@
   align-items: center;
 }
 
-/* ─── Reaction “+” Icon (on hover) ────────────────────────────────────── */
-
-/* Hidden by default */
+/* ─── Emoji picker & icons (on hover) ────────────────── */
 .messageActions {
   position: absolute;
   top: 8px;
@@ -129,29 +118,36 @@
   transition: opacity 0.15s ease;
 }
 
-/* Show it ONLY when hovering over the parent .messageItem */
+/* Reveal when hovering over message */
 .messageItem:hover .messageActions {
   opacity: 1;
 }
 
-.messageItem.clumped .messageActions {
-  top: -8px;
-}
-
-/* ─── The Emoji Picker Popover ────────────────────────────────────────── */
-
+/* Emoji picker popup (unchanged) */
 .emojiPicker {
   position: absolute;
-  top: 28px;       /* just below the reaction icon */
+  top: 28px; 
   right: 0;
   background: #2f3136;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  padding: 8px;
+  padding: 8px 12px;
+
+  /* OLD: display: flex; align-items: center; */
+  /* NEW: allow space‐between */
   display: flex;
-  gap: 6px;
+  align-items: center;
+  /* Distribute space so that the emojiList takes all available room */
+  justify-content: space-between;
+
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   z-index: 10;
+}
+
+.emojiList {
+  display: flex;
+  gap: 6px;
+  flex-grow: 1;
 }
 
 .emojiOption {
@@ -165,7 +161,101 @@
   transform: scale(1.2);
 }
 
-/* ─── Chat Input Bar (unchanged) ─────────────────────────────────────── */
+.pickerDivider {
+  margin: 0 8px; 
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 16px;
+  user-select: none;
+  /* Prevent the divider itself from growing */
+  flex-shrink: 0;
+}
+
+.replyButton {
+  font-size: 18px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.1s ease;
+  color: #ffffff;
+
+  /* NEW: prevent this from shrinking or stretching */
+  flex-shrink: 0;
+}
+
+.replyButton:hover {
+  transform: scale(1.2);
+}
+
+/* ─── NEW: Reply icon styling ─────────────────────────── */
+
+/* The “↩️” icon next to the picker */
+.replyIcon {
+  font-size: 18px;
+  margin-left: 8px;     /* small gap between emoji picker and reply icon */
+  cursor: pointer;
+  user-select: none;
+  color: #ffffff;
+  transition: transform 0.1s ease, opacity 0.15s ease;
+}
+
+/* Slight grow on hover */
+.replyIcon:hover {
+  transform: scale(1.2);
+}
+
+/* ─── NEW: Reply banner above input ───────────────────── */
+
+/* Container for the “Replying to …” banner */
+.replyBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  /* Match the input area’s look: slightly transparent, dark */
+  background: rgba(44, 45, 50, 0.8);
+
+  /* Top border to separate from messages */
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+  /* Bottom border to separate from input box */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+  /* Padding inside the banner */
+  padding: 8px 12px;
+
+  /* Keep it pinned above the input */
+  flex-shrink: 0;
+}
+
+/* “Replying to User: Snippet…” text */
+.replyInfo {
+  font-size: 13px;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Slightly dim the snippet text */
+.replyInfo .replySnippet {
+  color: #b9bbbe;
+}
+
+/* The “×” cancel button */
+.cancelReply {
+  font-size: 16px;
+  cursor: pointer;
+  color: #ffffff;
+  padding: 0 6px;
+  user-select: none;
+  transition: color 0.15s ease;
+}
+
+/* Hover turns it red-ish */
+.cancelReply:hover {
+  color: #ff6b6b;
+}
+
+/* ─── Chat input area (unchanged) ───────────────────── */
 .chatInput {
   padding: 16px 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -195,4 +285,8 @@
 
 .chatInput input:focus {
   background: rgba(255, 255, 255, 0.1);
+}
+
+.messageItem.clumped .messageActions {
+  top: -12px;
 }

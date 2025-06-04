@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import './ChatView.css';
 
-// Example “hard‐coded” messages.
-// Each still has a `reactions` array so we can show picked emojis.
+// Example “hard-coded” messages. Each has a reactions array and we’ll add
+// a replyToId to the state later.
 const initialMessages = [
   {
     id: 1,
@@ -69,8 +69,10 @@ const initialMessages = [
 
 export default function ChatView({ channel }) {
   const [messages, setMessages] = useState(initialMessages);
-  // Track which message is currently hovered
   const [hoveredMessageId, setHoveredMessageId] = useState(null);
+
+  // NEW: track which message is being replied to (id or null)
+  const [replyToId, setReplyToId] = useState(null);
 
   // Format a Date object as “HH:MM”
   const formatTime = (d) => {
@@ -79,7 +81,7 @@ export default function ChatView({ channel }) {
     return `${hh}:${mm}`;
   };
 
-  // Add a reaction emoji to a message
+  // Add a reaction emoji to a message (unchanged)
   const addReaction = (messageId, emoji) => {
     setMessages((prev) =>
       prev.map((m) =>
@@ -88,12 +90,19 @@ export default function ChatView({ channel }) {
           : m
       )
     );
-    // Keep the picker open if still hovering, or close if not.
-    // (hover logic will handle hiding if the mouse leaves)
   };
 
-  // A small list of emojis to choose from
-  const emojiOptions = [ '👍', '😂', '❤️', '😮', '😢', '👏' ];
+  // A small list of emojis to choose from (unchanged)
+  const emojiOptions = ['👍', '😂', '❤️', '😮', '😢', '👏'];
+
+  // When the user clicks “Reply” on a message:
+  // store that message’s id in state
+  const onReplyClick = (messageId) => {
+    setReplyToId(messageId);
+  };
+
+  // Find the message object for `replyToId` so we can show its snippet
+  const messageBeingRepliedTo = messages.find((m) => m.id === replyToId) || null;
 
   return (
     <div className="chatView">
@@ -172,32 +181,74 @@ export default function ChatView({ channel }) {
                 </div>
               </div>
 
-              {/* ─── Reaction “+” Icon (always present but visible only on hover) ─── */}
+              {/* ─── Actions (emoji picker + reply) ────────────────────────── */}
               <div className="messageActions">
-
-                {/* Show the emoji picker if this message is hovered */}
                 {isPickerVisible && (
                   <div className="emojiPicker">
-                    {emojiOptions.map((emo) => (
-                      <span
-                        key={emo}
-                        className="emojiOption"
-                        onClick={() => addReaction(msg.id, emo)}
-                      >
-                        {emo}
-                      </span>
-                    ))}
+                    {/* Emoji list */}
+                    <div className="emojiList">
+                      {emojiOptions.map((emo) => (
+                        <span
+                          key={emo}
+                          className="emojiOption"
+                          onClick={() => addReaction(msg.id, emo)}
+                        >
+                          {emo}
+                        </span>
+                      ))}
+                    </div>
+                    
+                    {/* Divider */}
+                    <div className="pickerDivider">|</div>
+                    
+                    {/* Reply button */}
+                    <span
+                      className="replyButton"
+                      onClick={() => onReplyClick(msg.id)}
+                      title="Reply to this message"
+                    >
+                      ↩️
+                    </span>
                   </div>
                 )}
               </div>
+
             </div>
           );
         })}
       </div>
 
+      {/* ─── “Replying to …” Banner (only if replyToId is set) ─────── */}
+      {messageBeingRepliedTo && (
+        <div className="replyBanner">
+          <div className="replyInfo">
+            <strong>{messageBeingRepliedTo.user.name}</strong>:
+            <span className="replySnippet">
+              {' '}
+              {messageBeingRepliedTo.content.slice(0, 50)}
+              {messageBeingRepliedTo.content.length > 50 && '…'}
+            </span>
+          </div>
+          <span
+            className="cancelReply"
+            onClick={() => setReplyToId(null)}
+            title="Cancel reply"
+          >
+            ×
+          </span>
+        </div>
+      )}
+
       {/* ─── Input Bar ───────────────────────────────────── */}
       <div className="chatInput">
-        <input type="text" placeholder={`Message #${channel}`} />
+        <input
+          type="text"
+          placeholder={
+            messageBeingRepliedTo
+              ? `Replying to ${messageBeingRepliedTo.user.name}…`
+              : `Message #${channel}`
+          }
+        />
       </div>
     </div>
   );
