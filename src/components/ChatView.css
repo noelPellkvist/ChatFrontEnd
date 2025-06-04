@@ -1,0 +1,198 @@
+/* ChatView.css */
+
+.chatView {
+  flex: 1;
+  background: radial-gradient(circle at top left, #2b2d31, #1e1f22);
+  display: flex;
+  flex-direction: column;
+  color: #f9fafb;
+}
+
+.chatHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.chatMessages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  font-size: 15px;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  /* No gap here—spacing is done per‐message via inline `margin-bottom` */
+}
+
+/* ─── Each message item ───────────────────────────────────────────────── */
+
+/* Make each message container relative, so we can absolutely place the reaction icon */
+.messageItem {
+  display: flex;
+  align-items: flex-start;
+  position: relative; /* enables absolute positioning of .messageActions */
+  transition: background 0.2s ease;
+}
+
+/* Highlight background + rounded corners on hover */
+.messageItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+/* Clumped‐within‐chat rules (hide avatar + meta) */
+.messageItem.clumped .messageAvatar,
+.messageItem.clumped .messageMeta {
+  display: none;
+}
+
+/* Avatar is still 40×40 circular */
+.messageAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+/* Container for username/timestamp + text */
+.messageContent {
+  display: flex;
+  flex-direction: column;
+  max-width: calc(100% - 52px);
+}
+
+.messageMeta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.messageUsername {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.messageTimestamp {
+  font-size: 12px;
+  color: #b9bbbe;
+}
+
+/* The actual message text (body) */
+.messageBody {
+  display: flex;
+  flex-direction: column;
+}
+
+.messageText {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #e3e5e8;
+  white-space: pre-wrap;
+}
+
+/* ─── Emoji Reactions Display ─────────────────────────────────────────── */
+
+/* Inline “pills” for each reaction under the text */
+.reactions {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 6px;
+  gap: 4px;
+}
+
+.reaction {
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ─── Reaction “+” Icon (on hover) ────────────────────────────────────── */
+
+/* Hidden by default */
+.messageActions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+/* Show it ONLY when hovering over the parent .messageItem */
+.messageItem:hover .messageActions {
+  opacity: 1;
+}
+
+.messageItem.clumped .messageActions {
+  top: -8px;
+}
+
+/* ─── The Emoji Picker Popover ────────────────────────────────────────── */
+
+.emojiPicker {
+  position: absolute;
+  top: 28px;       /* just below the reaction icon */
+  right: 0;
+  background: #2f3136;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+.emojiOption {
+  font-size: 18px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.1s ease;
+}
+
+.emojiOption:hover {
+  transform: scale(1.2);
+}
+
+/* ─── Chat Input Bar (unchanged) ─────────────────────────────────────── */
+.chatInput {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(44, 45, 50, 0.8);
+  flex-shrink: 0;
+}
+
+.chatInput input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: #f9fafb;
+  font-size: 15px;
+  transition: background 0.2s ease;
+}
+
+.chatInput input::placeholder {
+  color: #a1a1aa;
+}
+
+.chatInput input:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.chatInput input:focus {
+  background: rgba(255, 255, 255, 0.1);
+}

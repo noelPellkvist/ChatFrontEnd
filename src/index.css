@@ -1,13 +1,57 @@
-body {
+html, body {
+  height: 100vh;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
+  overflow: hidden; /* Prevent browser scroll */
+  font-family: 'Arial', sans-serif;
+  background-color: #1e1f24;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.app {
+  display: flex;
+  height: 100vh;
+  background-color: #1e1f24;
+}
+
+/* Sidebar */
+
+.sidebarColumn {
+  width: 240px;
+  background-color: #2F3136;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+
+
+
+.channel {
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #e4e4e7;
+  transition: all 0.2s ease;
+}
+
+.channel:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.channel.active {
+  background: rgba(88, 101, 242, 0.3);
+  color: #ffffff;
+}
+
+/* Chat View */
+
+
+.mainColumn {
+  width: 240px;
+  background-color: #2F3136;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
